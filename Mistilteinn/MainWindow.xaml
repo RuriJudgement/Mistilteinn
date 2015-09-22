@@ -1,0 +1,317 @@
+﻿<Window x:Class="Mistilteinn.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:controls="clr-namespace:Mistilteinn.Controls"
+        xmlns:viewModels="clr-namespace:Mistilteinn.ViewModels"
+        xmlns:converters="clr-namespace:Mistilteinn.Converters"
+        xmlns:cmd="clr-namespace:Mistilteinn.Commands"
+        xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewModels:MainWindowViewModel}"
+        Title="Mistilteinn" Height="720" Width="1280"
+        
+        UseLayoutRounding="True"
+        TextOptions.TextHintingMode="Fixed"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded"
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.DataGrid.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TextInfomationToName x:Key="TextInfomationToName"/>
+            <converters:TextInfomationsToString x:Key="TextInfomationsToString"/>
+            <converters:StringToVisibility x:Key="StringToVisibility"/>
+            <Style x:Key="DataGridCellStyle" TargetType="{x:Type DataGridCell}">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                    </Trigger>
+                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="true"/>
+                            <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}"/>
+                    </MultiTrigger>
+                    <Trigger Property="IsEnabled" Value="false">
+                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static cmd:MenuCommands.FileCommand}" Executed="CommandBinding_Executed"/>
+        <CommandBinding x:Name="NewProjectCommand" Command="{x:Static cmd:MenuCommands.NewProjectCommand}" Executed="NewProjectCommand_Executed"/>
+        <CommandBinding x:Name="OpenProjectCommand" Command="{x:Static cmd:MenuCommands.OpenProjectCommand}" Executed="OpenProjectCommand_Executed"/>
+        <CommandBinding x:Name="SaveProjectCommand" Command="{x:Static cmd:MenuCommands.SaveProjectCommand}" Executed="SaveProjectCommand_Executed"/>
+        <CommandBinding x:Name="SaveAsProjectCommand" Command="{x:Static cmd:MenuCommands.SaveAsProjectCommand}" Executed="SaveAsProjectCommand_Executed"/>
+        <CommandBinding x:Name="ExitCommand" Command="{x:Static cmd:MenuCommands.ExitCommand}" Executed="ExitCommand_Executed"/>
+
+        <CommandBinding Command="{x:Static cmd:MenuCommands.EditCommand}" Executed="CommandBinding_Executed"/>
+        <CommandBinding x:Name="EditInfoCommand" 
+                        Command="{x:Static cmd:MenuCommands.EditInfoCommand}" 
+                        Executed="EditInfoCommand_Executed"/>
+        <CommandBinding x:Name="EditRawCommand" 
+                        Command="{x:Static cmd:MenuCommands.EditRawCommand}" 
+                        Executed="EditRawCommand_Executed"/>
+        <CommandBinding Command="{x:Static cmd:MenuCommands.FindCommand}" Executed="CommandBinding_Executed"/>
+        <CommandBinding x:Name="FastFindCommand" 
+                        Command="{x:Static cmd:MenuCommands.FastFindCommand}" 
+                        Executed="FastFindCommand_Executed"/>
+        <CommandBinding x:Name="FindInOriginalCommand" 
+                        Command="{x:Static cmd:MenuCommands.FindInOriginalCommand}" 
+                        Executed="FindInOriginalCommand_Executed"/>
+        <CommandBinding x:Name="FindInTranslatedCommand" 
+                        Command="{x:Static cmd:MenuCommands.FindInTranslatedCommand}" 
+                        Executed="FindInTranslatedCommand_Executed"/>
+        <CommandBinding x:Name="CheckCommand" 
+                        Command="{x:Static cmd:MenuCommands.CheckCommand}" 
+                        Executed="CheckCommand_Executed"/>
+        <CommandBinding x:Name="NameTableCommand" 
+                        Command="{x:Static cmd:MenuCommands.NameTableCommand}" 
+                        Executed="NameTableCommand_Executed"/>
+        <CommandBinding x:Name="ProjectSettingCommand" 
+                        Command="{x:Static cmd:MenuCommands.ProjectSettingCommand}" 
+                        Executed="ProjectSettingCommand_Executed"/>
+
+        <CommandBinding Command="{x:Static cmd:MenuCommands.SoundCommand}" Executed="CommandBinding_Executed"/>
+        <CommandBinding x:Name="MuteCommand" 
+                        Command="{x:Static cmd:MenuCommands.MuteCommand}" 
+                        Executed="MuteCommand_Executed"/>
+        <CommandBinding x:Name="CloseMusicCommand" 
+                        Command="{x:Static cmd:MenuCommands.CloseMusicCommand}" 
+                        Executed="CloseMusicCommand_Executed"/>
+        <CommandBinding x:Name="CloseVoiceCommand" 
+                        Command="{x:Static cmd:MenuCommands.CloseVoiceCommand}" 
+                        Executed="CloseVoiceCommand_Executed"/>
+        <CommandBinding x:Name="ReplayVoiceCommand" 
+                        Command="{x:Static cmd:MenuCommands.ReplayVoiceCommand}" 
+                        Executed="ReplayVoiceCommand_Executed"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Menu >
+            <MenuItem x:Name="FileMenu" Command="{x:Static cmd:MenuCommands.FileCommand}">
+                <MenuItem Command="{x:Static cmd:MenuCommands.NewProjectCommand}" InputGestureText="Ctrl+N" ToolTip="新建项目 Ctrl+N">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xebb1;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.OpenProjectCommand}"  InputGestureText="Ctrl+O" ToolTip="打开项目 Ctrl+O">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xebb0;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.SaveProjectCommand}"  InputGestureText="Ctrl+S" ToolTip="保存项目 Ctrl+S">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xeaf9;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.SaveAsProjectCommand}"  InputGestureText="Ctrl+A" ToolTip="另存为项目">
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.ExitCommand}" InputGestureText="Atl+F4" ToolTip="退出程序 Atl+F4">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe842;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem x:Name="EditMenu" Command="{x:Static cmd:MenuCommands.EditCommand}">
+                <MenuItem Command="{x:Static cmd:MenuCommands.EditInfoCommand}"  InputGestureText="Ctrl+I" ToolTip="编辑脚本头 Ctrl+I">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe876;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.EditRawCommand}"  InputGestureText="Ctrl+E" ToolTip="编辑原脚本 Ctrl+E">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe922;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="FindMenu" Command="{x:Static cmd:MenuCommands.FindCommand}" ToolTip="查找内容">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe824;" FontSize="14"/>
+                    </MenuItem.Icon>
+                    <MenuItem Command="{x:Static cmd:MenuCommands.FastFindCommand}"  InputGestureText="Ctrl+F" ToolTip="在原文与译文中快速查找 Ctrl+F"/>
+                    <MenuItem Command="{x:Static cmd:MenuCommands.FindInOriginalCommand}"  InputGestureText="Ctrl+Shift+O" ToolTip="在原文中快速查找 Ctrl+Shift+O"/>
+                    <MenuItem Command="{x:Static cmd:MenuCommands.FindInTranslatedCommand}"  InputGestureText="Ctrl+Shift+T" ToolTip="在译文中快速查找 Ctrl+Shift+T"/>
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.CheckCommand}"  InputGestureText="Ctrl+C" ToolTip="检查文本合法性 Ctrl+C">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe878;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.NameTableCommand}"  InputGestureText="Ctrl+T" ToolTip="查看名词表 Ctrl+T">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe83d;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.ProjectSettingCommand}"  InputGestureText="Ctrl+P" ToolTip="项目设定 Ctrl+S">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe8a6;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Command="{x:Static cmd:MenuCommands.SoundCommand}">
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsMute, Mode=TwoWay}" Header="静音(_M)" InputGestureText="Ctrl+M" ToolTip="切换静音 Ctrl+M"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsMusicMute, Mode=TwoWay}" Command="{x:Static cmd:MenuCommands.CloseMusicCommand}" InputGestureText="Ctrl+Shift+M" ToolTip="关闭BGM Ctrl+Shift+M"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsVoiceMute, Mode=TwoWay}" Command="{x:Static cmd:MenuCommands.CloseVoiceCommand}" InputGestureText="Ctrl+Shift+V" ToolTip="关闭语音 Ctrl+Shift+V"/>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.ReplayVoiceCommand}" InputGestureText="F5" ToolTip="重播语音 F5">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xedf2;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <ToolBarTray Grid.Row="1" >
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}">
+                <Button ToolTip="新建项目 Ctrl+N" Command="{x:Static cmd:MenuCommands.NewProjectCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xebb1;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="打开项目 Ctrl+O" Command="{x:Static cmd:MenuCommands.OpenProjectCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xebb0;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="保存项目 Ctrl+S" Command="{x:Static cmd:MenuCommands.SaveProjectCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xeaf9;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Separator/>
+                <Button ToolTip="在原文与译文中快速查找 Ctrl+F" Command="{x:Static cmd:MenuCommands.FastFindCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe824;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="检查文本合法性 Ctrl+C" Command="{x:Static cmd:MenuCommands.CheckCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe878;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="查看名词表 Ctrl+T" Command="{x:Static cmd:MenuCommands.NameTableCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe83d;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="项目设定 Ctrl+S" Command="{x:Static cmd:MenuCommands.ProjectSettingCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe8a7;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Separator/>
+                <Button ToolTip="切换静音 Ctrl+M" Command="{x:Static cmd:MenuCommands.MuteCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="{Binding MuteIcon}" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="重播语音 F5" Command="{x:Static cmd:MenuCommands.ReplayVoiceCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xedf2;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+            </ToolBar>
+        </ToolBarTray>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MaxWidth="500"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" Margin="0,0,8,0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe89a;" FontSize="20" Foreground="{Binding BorderBrush, ElementName=FileList}" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    <ComboBox Grid.Column="1" x:Name="FileList" ItemsSource="{Binding TextFiles}" SelectionChanged="FileList_SelectionChanged_1"
+                          wpf:TextFieldAssist.Hint="脚本文件" VerticalAlignment="Bottom">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Infomations, Converter={StaticResource TextInfomationToName}}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Grid.Column="2" FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe876;" FontSize="16" FontWeight="Normal" Margin="9,0,0,0" Height="30" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" Width="30"/>
+                </Grid>
+                <DataGrid x:Name="TextList" Grid.Row="1" IsReadOnly="True" ItemsSource="{Binding SelectedItem.Texts, ElementName=FileList}" AutoGenerateColumns="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" SizeChanged="DataGrid_SizeChanged" VerticalContentAlignment="Stretch" CellStyle="{DynamicResource DataGridCellStyle}" SelectionChanged="DataGrid_SelectionChanged" Margin="0,8,0,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Index, StringFormat=000}" IsReadOnly="True" Header="编号"/>
+                        <DataGridTemplateColumn  Header="原文本" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <wpf:Card Background="{DynamicResource PrimaryHueDarkBrush}"
+                                              Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                              Padding="8" UniformCornerRadius="4" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="4">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBox Visibility="{Binding NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox wpf:TextFieldAssist.Hint="原文本" Grid.Row="1" Text="{Binding OriginalText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                        </Grid>
+                                    </wpf:Card>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn  Header="翻译文本" IsReadOnly="True">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <wpf:Card Background="{DynamicResource PrimaryHueDarkBrush}"
+                                              Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                              Padding="8" UniformCornerRadius="4" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"  Margin="4">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBox Visibility="{Binding NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                            <TextBox wpf:TextFieldAssist.Hint="翻译文本" Grid.Row="1" Text="{Binding TranslatedText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,4,0,0" >
+                                                <controls:CommentControl DataContext="{Binding}" Margin="0,0,8,0"/>
+                                                <controls:TextCheckControl DataContext="{Binding CheckResult}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </wpf:Card>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <DataGrid ItemsSource="{Binding ActiveNameTable}" SelectionMode="Single" SelectionUnit="FullRow" CanUserSortColumns="True" CanUserAddRows="False"  AutoGenerateColumns="False" MouseDoubleClick="DataGrid_MouseDoubleClick" SizeChanged="DataGrid_SizeChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Index, StringFormat=00}" Header="序号" IsReadOnly="True"/>
+                        <wpf:MaterialDataGridTextColumn Binding="{Binding OriginalText, Mode=TwoWay}"
+                                                        Header="原文本"                                                        
+                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" 
+                                                        />
+                        <wpf:MaterialDataGridTextColumn Binding="{Binding TranslatedText, Mode=TwoWay}"
+                                                        Header="参考文本"                                                        
+                                                        EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Viewbox Grid.Row="1">
+                    <Grid Width="1280" Height="720">
+                        <controls:GamePreview x:Name="GamePreview" GameText="{Binding SelectedItem, ElementName=TextList}" KeyPressed="GamePreview_KeyPressed" Visibility="{Binding PreviewVisibility}"/>
+                    </Grid>
+                </Viewbox>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

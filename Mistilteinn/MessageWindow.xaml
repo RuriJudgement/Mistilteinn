@@ -1,0 +1,53 @@
+﻿<Window x:Class="Mistilteinn.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:controls="clr-namespace:Mistilteinn.Controls"
+        xmlns:cmd="clr-namespace:Mistilteinn.Commands"
+        xmlns:vm="clr-namespace:Mistilteinn.ViewModels"
+        mc:Ignorable="d"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        
+        d:DataContext="{d:DesignInstance Type=vm:MessageWindowViewModel}"
+        WindowStartupLocation="CenterOwner"
+        Title="{Binding Title}" Height="200" Width="400" WindowStyle="ToolWindow">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding x:Name="Yes" Command="{x:Static cmd:MessageDialogButtonCommands.YesCommand}" Executed="Yes_Executed"/>
+        <CommandBinding x:Name="No" Command="{x:Static cmd:MessageDialogButtonCommands.NoCommand}" Executed="No_Executed"/>
+        <CommandBinding x:Name="Ok" Command="{x:Static cmd:MessageDialogButtonCommands.OkCommand}" Executed="Ok_Executed"/>
+        <CommandBinding x:Name="Cancel" Command="{x:Static cmd:MessageDialogButtonCommands.CancelCommand}" Executed="Cancel_Executed"/>
+    </Window.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid VerticalAlignment="Center" Margin="20,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="{Binding Icon}" FontSize="53.333" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{StaticResource PrimaryHueDarkBrush}"/>
+            <TextBlock Grid.Column="1" Text="{Binding Text}" TextWrapping="Wrap" FontSize="18.667" Margin="16,10,10,10"/>
+        </Grid>
+        <Border Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8">
+                <controls:MessageDialogButton Visibility="{Binding YesVisibility}" Command="{x:Static cmd:MessageDialogButtonCommands.YesCommand}" Content="是" Margin="0,0,8,0"></controls:MessageDialogButton>
+                <controls:MessageDialogButton Visibility="{Binding NoVisibility}" Command="{x:Static cmd:MessageDialogButtonCommands.NoCommand}" Content="否" Margin="0,0,8,0"></controls:MessageDialogButton>
+                <controls:MessageDialogButton Visibility="{Binding OkVisibility}" Command="{x:Static cmd:MessageDialogButtonCommands.OkCommand}" Content="确定" Margin="0,0,8,0"></controls:MessageDialogButton>
+                <controls:MessageDialogButton Visibility="{Binding CancelVisibility}" Command="{x:Static cmd:MessageDialogButtonCommands.CancelCommand}" Foreground="{StaticResource SecondaryAccentBrush}" Content="取消" Margin="0,0,8,0"></controls:MessageDialogButton>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

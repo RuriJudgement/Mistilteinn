@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="Mistilteinn.Controls.CommentControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Mistilteinn.Controls"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:texts="clr-namespace:Mistilteinn.Texts"
+             mc:Ignorable="d" 
+             TextOptions.TextFormattingMode="Ideal"
+             TextOptions.TextRenderingMode="ClearType"
+             TextOptions.TextHintingMode="Fixed"
+             d:DesignHeight="30" d:DesignWidth="30" 
+             d:DataContext="{d:DesignInstance Type=texts:Text, IsDesignTimeCreatable = True}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <wpf:Card x:Name="Card" UniformCornerRadius="15" 
+                  Padding="1" 
+                  ToolTip="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  VerticalAlignment="Center" HorizontalAlignment="Center" 
+                  MouseDown="Card_MouseDown">
+            <Grid Width="16" Height="16">
+                <TextBlock Text="{Binding CommentDisplay}" Foreground="{StaticResource PrimaryHueDarkBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="/Mistilteinn;component/Assets/#fontello"/>
+            </Grid>
+        </wpf:Card>
+    </Grid>
+</UserControl>

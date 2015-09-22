@@ -1,0 +1,45 @@
+﻿<Window x:Class="Mistilteinn.CommentEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        xmlns:texts="clr-namespace:Mistilteinn.Texts"
+        mc:Ignorable="d"
+        Title="注释" Height="200" Width="400"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow" ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance Type=texts:Text, IsDesignTimeCreatable = True}" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="2">
+            <TextBlock Text="注释编辑" FontWeight="Bold" FontSize="16"/>
+            <TextBlock TextWrapping="WrapWithOverflow" Text="编辑注释,用于标记不确定的翻译或是与其他翻译沟通." Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <TextBox x:Name="Comment" wpf:TextFieldAssist.Hint="注释" 
+                 AcceptsReturn="True" TextWrapping="WrapWithOverflow"
+                 Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Grid.Row="1" Margin="0,8,0,0" VerticalScrollBarVisibility="Auto"/>
+
+        <Button x:Name="Close" Content="关闭" Grid.Column="1" Grid.Row="1" Margin="16,0,0,0" VerticalAlignment="Bottom" Background="{StaticResource SecondaryAccentBrush}" Click="Close_Click"></Button>
+    </Grid>
+</Window>

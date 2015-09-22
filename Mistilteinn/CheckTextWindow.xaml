@@ -1,0 +1,157 @@
+﻿<Window x:Class="Mistilteinn.CheckTextWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        xmlns:viewModels="clr-namespace:Mistilteinn.ViewModels"
+        xmlns:converters="clr-namespace:Mistilteinn.Converters"
+        xmlns:controls="clr-namespace:Mistilteinn.Controls"
+        mc:Ignorable="d"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        
+        Title="文本检查" Height="400" Width="500" d:DataContext="{d:DesignInstance Type=viewModels:CheckTextWindowViewModel}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TextInfomationToName x:Key="TextInfomationToName"/>
+            <converters:TextInfomationsToString x:Key="TextInfomationsToString"/>
+            <converters:StringToVisibility x:Key="StringToVisibility"/>
+            <Storyboard x:Name="BeginCheck" x:Key="BeginCheck" Completed="Storyboard_Completed">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="progressBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="textBlock">
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="progressBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+            <Storyboard x:Name="EndCheck" x:Key="EndCheck">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="progressBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="20">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="textBlock">
+                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="-14">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="progressBar">
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                        <EasingDoubleKeyFrame.EasingFunction>
+                            <CircleEase EasingMode="EaseOut"/>
+                        </EasingDoubleKeyFrame.EasingFunction>
+                    </EasingDoubleKeyFrame>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <TextBlock Text="文本检查" FontWeight="Bold" FontSize="16"/>
+            <TextBlock TextWrapping="WrapWithOverflow" Text="文本检查可以简单的审核文本是否符合格式需要." Margin="0,4,0,0"/>
+        </StackPanel>
+        <Button x:Name="StartCheck" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Bottom" MinWidth="92" Click="StartCheck_Click">
+            <StackPanel Orientation="Horizontal">
+                <ProgressBar x:Name="progressBar" Style="{StaticResource MaterialDesignCicularProgressBar}"                     
+                     Value="0"
+                     IsIndeterminate="True"
+                     Grid.Column="0" Foreground="White" Opacity="0" RenderTransformOrigin="0.5,0.5">
+                    <ProgressBar.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="20"/>
+                        </TransformGroup>
+                    </ProgressBar.RenderTransform>
+                </ProgressBar>
+                <TextBlock x:Name="textBlock" Text="开始" HorizontalAlignment="Left" Margin="8,0,0,0" FontSize="16" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform X="-14"/>
+                        </TransformGroup>
+                    </TextBlock.RenderTransform></TextBlock>
+            </StackPanel>
+        </Button>
+        <DataGrid Grid.Row="1" IsReadOnly="True" Grid.ColumnSpan="2" AutoGenerateColumns="False" ItemsSource="{Binding CheckTextResults}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="序号" Binding="{Binding Index, StringFormat=000}"/>
+                <DataGridTemplateColumn  Header="原文本" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <wpf:Card Background="{DynamicResource PrimaryHueDarkBrush}"
+                                              Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                              Padding="8" UniformCornerRadius="4" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Margin="4">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBox Visibility="{Binding Text.NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding Text.NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox wpf:TextFieldAssist.Hint="原文本" Grid.Row="1" Text="{Binding Text.OriginalText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                </Grid>
+                            </wpf:Card>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="翻译文本" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <wpf:Card Background="{DynamicResource PrimaryHueDarkBrush}"
+                                              Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}"
+                                              Padding="8" UniformCornerRadius="4" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"  Margin="4">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBox Visibility="{Binding Text.NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding Text.NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox wpf:TextFieldAssist.Hint="翻译文本" Grid.Row="1" Text="{Binding Text.TranslatedText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,4,0,0" >
+                                        <controls:CommentControl DataContext="{Binding Text}" Margin="0,0,8,0"/>
+                                        <controls:TextCheckControl DataContext="{Binding Text.CheckResult}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </wpf:Card>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

@@ -1,0 +1,97 @@
+﻿<Window x:Class="Mistilteinn.WelcomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        mc:Ignorable="d"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        
+        Title="欢迎" Height="300" Width="400" Closed="Window_Closed" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.CheckBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ListBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height ="60"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Background="LightGray">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0,0,0">
+                <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe997;" FontSize="36" FontWeight="Normal" VerticalAlignment="Center"/>
+                <TextBlock Text="Mistilteinn" FontWeight="Bold" FontSize="26" VerticalAlignment="Center" Margin="16,0,0,0"/>
+                <Separator UseLayoutRounding="True" Margin="10">
+                    <Separator.LayoutTransform>
+                        <RotateTransform Angle="90" />
+                    </Separator.LayoutTransform>
+                </Separator>
+                <TextBlock Text="欢迎"  FontSize="26" VerticalAlignment="Center"/>
+
+            </StackPanel>
+        </Grid>
+        <Grid Row="1" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height ="50"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <TextBlock Text="欢迎" FontWeight="Bold" FontSize="16"/>
+                <TextBlock Text="欢迎使用 Mistilteinn,您可以选择一个项目或者是创建一个项目." Margin="0,4,0,0"/>
+            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="1"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid  HorizontalAlignment="Left" Margin="0,0,8,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height ="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height ="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="打开已有项目" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Grid.Row="1" TextWrapping="WrapWithOverflow" Text="打开一个已保存的 Mis 项目文件,立即恢复之前的进度." Margin="0,4,0,0"/>
+                    <Button x:Name="OpenProject" Style="{StaticResource MaterialDesignFlatButton}" Grid.Row="2" HorizontalContentAlignment="Left" Foreground="{StaticResource PrimaryHueDarkBrush}" Padding="4" Click="OpenProject_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xebb0;" FontSize="16" FontWeight="Normal" VerticalAlignment="Bottom"/>
+                            <TextBlock Text="打开翻译项目..." VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+                <Separator Grid.Column="1" UseLayoutRounding="True">
+                    <Separator.LayoutTransform>
+                        <RotateTransform Angle="90" />
+                    </Separator.LayoutTransform>
+                </Separator>
+
+                <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="8,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height ="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height ="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="新建新的项目" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Grid.Row="1" TextWrapping="WrapWithOverflow" Text="新建一个新的翻译项目,提供相应的资料即可完成创建." Margin="0,4,0,0"/>
+                    <Button x:Name="CreateNew" Style="{StaticResource MaterialDesignFlatButton}" Grid.Row="2" HorizontalContentAlignment="Left" Click="CreateNew_Click" Foreground="{StaticResource PrimaryHueDarkBrush}" Padding="4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xebb1;" FontSize="16" FontWeight="Normal" VerticalAlignment="Bottom"/>
+                            <TextBlock Text="新建翻译项目..." VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
