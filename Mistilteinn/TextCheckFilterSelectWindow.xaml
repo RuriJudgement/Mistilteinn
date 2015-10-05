@@ -1,0 +1,84 @@
+﻿<Window x:Class="Mistilteinn.TextCheckFilterSelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:viewModels="clr-namespace:Mistilteinn.ViewModels"
+        xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        Title="文本筛选器" Height="340" Width="400"
+        
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow"
+        d:DataContext="{d:DesignInstance Type=viewModels:CheckTextWindowViewModel}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel >
+            <TextBlock Text="文本筛选器" FontWeight="Bold" FontSize="16"/>
+            <TextBlock TextWrapping="WrapWithOverflow" Text="将筛选符合制定条件的文本." Margin="0,4,0,0"/>
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="0,8,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="紧急度">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Content="提示" Grid.Column="0" IsChecked="{Binding IsInfomationChecked, Mode=TwoWay}"/>
+                    <CheckBox Content="警告" Grid.Column="1" IsChecked="{Binding IsWarningChecked, Mode=TwoWay}"/>
+                    <CheckBox Content="错误" Grid.Column="2" IsChecked="{Binding IsErrorChecked, Mode=TwoWay}"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="检查结果" Grid.Row="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Content="未翻译" IsChecked="{Binding IsNotTranslatedChecked, Mode=TwoWay}"/>
+                    <CheckBox Content="包含半角" IsChecked="{Binding IsHalfWidthCharacterChecked, Mode=TwoWay}" Grid.Column="1"/>
+                    <CheckBox Content="注音标记" IsChecked="{Binding IsPhoneticMarkerChecked, Mode=TwoWay}" Grid.Column="2"/>
+                    <CheckBox Content="行数不匹配" IsChecked="{Binding IsLineNotMatchChecked, Mode=TwoWay}" Grid.Row="1"/>
+                    <CheckBox Content="格式不匹配" IsChecked="{Binding IsFormatNotMatchChecked, Mode=TwoWay}" Grid.Row="1" Grid.Column="1"/>
+                    <CheckBox Content="未替换的名词" IsChecked="{Binding IsNounNotReplacedChecked, Mode=TwoWay}" Grid.Row="1" Grid.Column="2"/>
+                    <CheckBox Content="包含日语" IsChecked="{Binding IsJapaneseChecked, Mode=TwoWay}" Grid.Row="2" Grid.Column="0"/>
+                    <CheckBox Content="包含非简体汉字" IsChecked="{Binding IsTraditionalChineseChecked, Mode=TwoWay}" Grid.Row="2" Grid.Column="1"/>
+                    <CheckBox Content="长度太短" IsChecked="{Binding IsTooShortChecked, Mode=TwoWay}" Grid.Row="2" Grid.Column="2"/>
+                    <CheckBox Content="标点不匹配" IsChecked="{Binding IsPunctuationsNotMatchChecked, Mode=TwoWay}" Grid.Row="3" Grid.Column="0"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="注释" Grid.Row="2">
+                <CheckBox Content="含有注释" IsChecked="{Binding HasComment, Mode=TwoWay}"/>
+            </GroupBox>
+        </Grid>
+        <Button x:Name="FindNext" Content="关闭" Grid.Row="2" Margin="16,0,0,0" VerticalAlignment="Bottom" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Right" Width="92" Click="FindNext_Click"></Button>
+    </Grid>
+</Window>

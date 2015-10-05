@@ -1,0 +1,48 @@
+﻿<Window x:Class="Mistilteinn.TextInfoEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Mistilteinn"
+        xmlns:texts="clr-namespace:Mistilteinn.Texts"
+        xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        xmlns:converters="clr-namespace:Mistilteinn.Converters"
+        mc:Ignorable="d"
+        Title="编辑脚本头" Height="200" Width="450"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        Background="{DynamicResource MaterialDesignPaper}"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow" ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance Type=texts:TextFile}" Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:TextInfomationsToString x:Key="TextInfomationsToString"></converters:TextInfomationsToString>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="2">
+            <TextBlock Text="编辑脚本头" FontWeight="Bold" FontSize="16"/>
+            <TextBlock TextWrapping="WrapWithOverflow" Text="脚本头含有一些脚本文件的主要信息,这些信息的其中一些可能进行翻译." Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <TextBox x:Name="Info" wpf:TextFieldAssist.Hint="脚本头" 
+                 AcceptsReturn="True" TextWrapping="WrapWithOverflow"
+                 Text="{Binding Infomations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource TextInfomationsToString}}" 
+                 Style="{StaticResource MaterialDesignFloatingHintTextBox}" Grid.Row="1" Margin="0,8,0,0" VerticalScrollBarVisibility="Auto"/>
+
+        <Button x:Name="Close" Content="关闭" Grid.Column="1" Grid.Row="1" Margin="16,0,0,0" VerticalAlignment="Bottom" Background="{StaticResource SecondaryAccentBrush}" Click="Close_Click"></Button>
+    </Grid>
+</Window>
+

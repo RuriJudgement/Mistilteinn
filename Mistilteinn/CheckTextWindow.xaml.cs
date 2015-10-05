@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.VisualBasic;
 using Mistilteinn.Texts;
 using Mistilteinn.Unit;
 using Mistilteinn.ViewModels;
@@ -32,64 +33,39 @@ namespace Mistilteinn
             InitializeComponent();
             this.DataContext = new CheckTextWindowViewModel();
         }
-
-        private bool isChecking = false;
-
-        private async void StartCheck_Click(object sender, RoutedEventArgs e)
+        
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (isChecking)
+            new TextCheckFilterSelectWindow()
             {
-                return;
+                Owner = this,
+                DataContext = DataContext
+            }.Show();
+        }
+
+        private void DataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            DataGrid dataGrid = sender as DataGrid;
+
+            double width = e.NewSize.Width - dataGrid.Columns[0].ActualWidth;
+            width = width / (dataGrid.Columns.Count - 1);
+
+            for (int i = 1; i < dataGrid.Columns.Count; i++)
+            {
+                dataGrid.Columns[i].Width = width - 9;
             }
-            textBlock.Text = "检查";
-            (this.Resources["BeginCheck"] as Storyboard).Begin();
-
-            var vm = (DataContext as CheckTextWindowViewModel);
-
-
-
-            List<TextFile> files = null;
-            List<TextCheckResult> buffer = new List<TextCheckResult>(1024);
-
-
-
-            await Application.Current.MainWindow.Dispatcher.InvokeAsync(() =>
-            {
-                files = new List<TextFile>((Application.Current.MainWindow.DataContext as MainWindowViewModel).TextFiles);
-            });
-
-
-            await Task.Run(async () =>
-            {
-                for (int index = 0; index < files.Count; index++)
-                {
-                    var textFile = files[index];
-                    for (int i = 0; i < textFile.Texts.Count; i++)
-                    {
-                        var text = textFile.Texts[i];
-
-                        var checkResult = TextChecker.Check(text);
-                        if (checkResult.Result != TextCheckResultType.Pass)
-                        {
-                            checkResult.Index = buffer.Count + 1;
-                            buffer.Add(checkResult);
-                        }
-                    }
-                }
-
-                await Dispatcher.InvokeAsync(() =>
-                {
-                    vm.CheckTextResults = new ObservableCollection<TextCheckResult>(buffer);
-                    (this.Resources["EndCheck"] as Storyboard).Begin();
-                    textBlock.Text = "开始";
-                });
-            });
         }
 
-        private async void Storyboard_Completed(object sender, EventArgs e)
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-        }
+            DataGrid dataGrid = sender as DataGrid;
+            Text text = dataGrid.SelectedItem as Text;
 
+            if (text != null)
+            {
+                (Application.Current.MainWindow as MainWindow).SetTextIndex(text.FileIndex - 1, text.TextIndex - 1);
+            }
+        }
     }
 
     public static class TextChecker
@@ -165,7 +141,7 @@ namespace Mistilteinn
                 }
             }
 
-            if (NameTableUnit.NameTable.Any(n => text.TranslatedText.ToLower().Contains(n.Key.ToLower())))
+            if (NameTableUnit.NameTable.Where(n => text.OriginalText.ToLower().Contains(n.Key.ToLower())).Any(n => text.TranslatedText.ToLower().Contains(n.Key.ToLower()) && n.Key != n.Value.TranslatedText && !String.IsNullOrEmpty(n.Value.TranslatedText.Trim("　。？！…「」『』，、".ToCharArray()))))
             {
                 result.Result |= TextCheckResultType.NounNotReplaced;
                 result.Importance |= ErrorImportance.Infomation;
@@ -177,23 +153,30 @@ namespace Mistilteinn
                 result.Result |= TextCheckResultType.Japanese;
                 result.Importance |= ErrorImportance.Infomation;
             }
+
+            if (Microsoft.VisualBasic.Strings.StrConv(text.TranslatedText, VbStrConv.SimplifiedChinese) !=
+                text.TranslatedText)
+            {
+                result.Result |= TextCheckResultType.TraditionalChinese;
+                result.Importance |= ErrorImportance.Warnning;
+
+            }
             else
             {
-                var chinese = Regex.Match(text.TranslatedText, @"[\u4e00-\u9fa5]*");
-
-                if (chinese.Success)
+                var matches = Regex.Matches(text.TranslatedText, @"[\u4e00-\u9fa5]+");
+                foreach (Match chinese in matches)
                 {
-                    Encoding gb = Encoding.GetEncoding("gb2312");
-                    foreach (Group @group in chinese.Groups)
+                    if (chinese.Success)
                     {
-                        foreach (var ch in @group.Value)
+                        Encoding gb = Encoding.GetEncoding("gb2312");
+                        foreach (var ch in chinese.Value)
                         {
                             var bytes = gb.GetBytes(ch.ToString());
 
                             if (bytes.Length == 2)
                             {
                                 if (bytes[0] >= 0xB0
-                                    && bytes[1] <= 0xF7
+                                    && bytes[0] <= 0xF7
                                     && bytes[1] >= 0xA1
                                     && bytes[1] <= 0xFE)
                                 {
@@ -208,20 +191,20 @@ namespace Mistilteinn
                             }
                         }
                     }
-
-                    TraditionalChinese:;
                 }
             }
+            
+            TraditionalChinese:;
 
-            int okLenght = Math.Max(5, (int)Math.Round(text.OriginalText.Length * 0.3));
+            int okLenght = Math.Max(5, (int)Math.Round(text.OriginalText.Length * 0.45));
 
             if (text.OriginalText.Length - text.TranslatedText.Length > okLenght)
             {
                 result.Result |= TextCheckResultType.TooShort;
                 result.Importance |= ErrorImportance.Infomation;
             }
-            
-            if (text.OriginalText.Count(c=> "　。？！…「」『』".Contains(c)) != text.TranslatedText.Count(c => "　。？！…「」『』".Contains(c)))
+
+            if (text.OriginalText.Count(c => "　。？！…「」『』".Contains(c)) != text.TranslatedText.Count(c => "　。？！…「」『』".Contains(c)))
             {
                 result.Result |= TextCheckResultType.PunctuationsNotMatch;
                 result.Importance |= ErrorImportance.Infomation;
@@ -315,19 +298,22 @@ namespace Mistilteinn
                 OnPropertyChanged(nameof(CheckResultInfo));
             }
         }
-       
+
         public SolidColorBrush ProgressBarForeground
         {
             get
             {
-                switch (Importance)
+                if (Importance.HasFlag(ErrorImportance.Error))
                 {
-                    case ErrorImportance.Infomation:
-                        return new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
-                    case ErrorImportance.Warnning:
-                        return new SolidColorBrush(Color.FromRgb(0xFF, 0x94, 0x00));
-                    case ErrorImportance.Error:
-                        return new SolidColorBrush(Color.FromRgb(0xFF, 0x17, 0x44));
+                    return new SolidColorBrush(Color.FromRgb(0xFF, 0x17, 0x44));
+                }
+                if (Importance.HasFlag(ErrorImportance.Warnning))
+                {
+                    return new SolidColorBrush(Color.FromRgb(0xFF, 0x94, 0x00));
+                }
+                if (Importance.HasFlag(ErrorImportance.Infomation))
+                {
+                    return new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
                 }
                 return Application.Current.Resources["PrimaryHueDarkBrush"] as SolidColorBrush;
             }
@@ -345,20 +331,22 @@ namespace Mistilteinn
                     var result = new StringBuilder(512);
                     int index = 1;
                     result.Append("检查结果:");
-                    switch (Importance)
+
+                    if (Importance.HasFlag(ErrorImportance.Error))
                     {
-                        case ErrorImportance.Normal:
-                            result.AppendLine("一般");
-                            break;
-                        case ErrorImportance.Infomation:
-                            result.AppendLine("提示");
-                            break;
-                        case ErrorImportance.Warnning:
-                            result.AppendLine("警告");
-                            break;
-                        case ErrorImportance.Error:
-                            result.AppendLine("错误");
-                            break;
+                        result.AppendLine("错误");
+                    }
+                    if (Importance.HasFlag(ErrorImportance.Warnning))
+                    {
+                        result.AppendLine("警告");
+                    }
+                    if (Importance.HasFlag(ErrorImportance.Infomation))
+                    {
+                        result.AppendLine("提示");
+                    }
+                    if (Importance == ErrorImportance.Normal)
+                    {
+                        result.AppendLine("一般");
                     }
 
                     if (Result.HasFlag(TextCheckResultType.NotTranslated))
@@ -413,9 +401,8 @@ namespace Mistilteinn
     {
         Normal = 0,
         Infomation = 0x1,
-        Warnning = 0x3,
-        Error = 0x7
-
+        Warnning = 0x2,
+        Error = 0x4
     }
 
     [Flags]

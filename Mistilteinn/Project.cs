@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Win32;
 using Mistilteinn.Helper;
 using Mistilteinn.Unit;
@@ -36,13 +37,18 @@ namespace Mistilteinn
         private bool _isVoiceMute;
         private int _musicVolume = 80;
         private int _voiceVolume = 100;
+        private bool _isClassicViewModeOn;
+        private bool _textCheckFilterHasComment;
+        private ErrorImportance _textCheckFilterErrorImportance;
+        private TextCheckResultType _textCheckFilterResultType;
+        private double _fontSize;
 
         public static Project CreateProject()
         {
             ProjectPath = null;
             return Current = new Project()
             {
-                Version = "2.7"
+                Version = "2.8"
             };
         }
         public static String ProjectPath { get; private set; }
@@ -86,7 +92,24 @@ namespace Mistilteinn
                 result.MusicVolume = 80;
                 result.VoiceVolume = 100;
             }
-            
+            if (result.Version == "2.7")
+            {
+                result.Version = "2.8";
+                result.IsClassicViewModeOn = !result.IsPreviewEnable;
+            }
+            if (result.Version == "2.8")
+            {
+                result.Version = "3.0";
+                result.TextCheckFilterHasComment = true;
+                result.TextCheckFilterResultType = TextCheckResultType.NotTranslated;
+                result.TextCheckFilterErrorImportance = ErrorImportance.Error | ErrorImportance.Warnning;
+            }
+            if (result.Version == "3.0")
+            {
+                result.Version = "3.2";
+                result.FontSize = 20;
+            }
+
             return Current = result;
         }
         public static Project OpenProject(Window owner)
@@ -130,12 +153,10 @@ namespace Mistilteinn
                 Current.Save(ProjectPath);
             }
         }
-
         public static void SaveProject(String path)
         {
             Current.Save(path);
         }
-
         public String TextPath
         {
             get { return _textPath; }
@@ -328,7 +349,56 @@ namespace Mistilteinn
                 SoundUnit.VoiceVolume = value;
             }
         }
-
+        public bool IsClassicViewModeOn
+        {
+            get { return _isClassicViewModeOn; }
+            set
+            {
+                if (value == _isClassicViewModeOn) return;
+                _isClassicViewModeOn = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool TextCheckFilterHasComment
+        {
+            get { return _textCheckFilterHasComment; }
+            set
+            {
+                if (value == _textCheckFilterHasComment) return;
+                _textCheckFilterHasComment = value;
+                OnPropertyChanged();
+            }
+        }
+        public TextCheckResultType TextCheckFilterResultType
+        {
+            get { return _textCheckFilterResultType; }
+            set
+            {
+                if (value == _textCheckFilterResultType) return;
+                _textCheckFilterResultType = value;
+                OnPropertyChanged();
+            }
+        }
+        public ErrorImportance TextCheckFilterErrorImportance
+        {
+            get { return _textCheckFilterErrorImportance; }
+            set
+            {
+                if (value == _textCheckFilterErrorImportance) return;
+                _textCheckFilterErrorImportance = value;
+                OnPropertyChanged();
+            }
+        }
+        public double FontSize
+        {
+            get { return _fontSize; }
+            set
+            {
+                if (value.Equals(_fontSize)) return;
+                _fontSize = value;
+                OnPropertyChanged();
+            }
+        }
         public void Save(String path)
         {
             File.WriteAllText(path, ToString(), Encoding.UTF8);

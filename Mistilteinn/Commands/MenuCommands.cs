@@ -47,9 +47,6 @@ namespace Mistilteinn.Commands
         public static readonly RoutedUICommand NameTableCommand = new RoutedUICommand("名词表(_T)", "NameTableCommand",
             typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.T, ModifierKeys.Control) }));
 
-        public static readonly RoutedUICommand CheckCommand = new RoutedUICommand("检查文本(_C)", "CheckCommand",
-            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.C, ModifierKeys.Control) }));
-
         public static readonly RoutedUICommand ProjectSettingCommand = new RoutedUICommand("项目设定(_S)", "ProjectSettingCommand",
             typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.P, ModifierKeys.Control) }));
 
@@ -66,5 +63,35 @@ namespace Mistilteinn.Commands
 
         public static readonly RoutedUICommand ReplayVoiceCommand = new RoutedUICommand("重播语音(_R)", "ReplayVoiceCommand",
             typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F5) }));
+
+        public static readonly RoutedUICommand ViewCheckCommand = new RoutedUICommand("查看检查结果(_V)", "ViewCheckCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.C, ModifierKeys.Control | ModifierKeys.Shift) }));
+
+        public static readonly RoutedUICommand PreviousInfomationTextCommand = new RoutedUICommand("上一个提示(_I)", "PreviousInfomationTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3, ModifierKeys.Control | ModifierKeys.Shift) }));
+
+        public static readonly RoutedUICommand PreviousWarnningTextCommand = new RoutedUICommand("上一个警告(_W)", "PreviousWarnningTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3, ModifierKeys.Control) }));
+
+        public static readonly RoutedUICommand PreviousErrorTextCommand = new RoutedUICommand("上一个错误(_E)", "PreviousErrorTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3) }));
+
+        public static readonly RoutedUICommand NextInfomationTextCommand = new RoutedUICommand("下一个提示(_I)", "NextInfomationTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F4, ModifierKeys.Control | ModifierKeys.Shift) }));
+
+        public static readonly RoutedUICommand NextWarnningTextCommand = new RoutedUICommand("下一个警告(_W)", "NextWarnningTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F4, ModifierKeys.Control) }));
+
+        public static readonly RoutedUICommand NextErrorTextCommand = new RoutedUICommand("下一个错误(_E)", "NextErrorTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F4) }));
+
+        public static readonly RoutedUICommand NextCommentTextCommand = new RoutedUICommand("下一个注释(_C)", "NextCommentTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F4, ModifierKeys.Alt) }));
+
+        public static readonly RoutedUICommand PreviousCommentTextCommand = new RoutedUICommand("上一个注释(_C)", "PreviousCommentTextCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F3, ModifierKeys.Alt) }));
+
+        public static readonly RoutedUICommand ClassicViewCommand = new RoutedUICommand("经典视图(_C)", "ClassicViewCommand",
+            typeof(MenuCommands), new InputGestureCollection(new InputGesture[] { new KeyGesture(Key.F2) }));
     }
 }

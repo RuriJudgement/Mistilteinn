@@ -19,7 +19,7 @@ using VisualTreeHelper = Mistilteinn.Helper.VisualTreeHelper;
 
 namespace Mistilteinn.Controls
 {
-    public class GamePreview : Control
+    public class GamePreview : Control, ITextEditer
     {
         static GamePreview()
         {
@@ -214,29 +214,17 @@ namespace Mistilteinn.Controls
                 if (updateImage)
                 {
                     GameBackground = await GraphicalUnit.ReadScript(GameText);
-                    if (!String.IsNullOrEmpty(GameText?.Face?.Path))
+                    if (!String.IsNullOrEmpty(GameText?.Face?.Path) && !String.IsNullOrEmpty(GameText.NameBoard))
                     {
-                        FaceImage = new BitmapImage(new Uri(FileHelper.FindFile(Project.Current.FacePath, GameText.Face.Path)));
+                        var faceFile = FileHelper.FindFile(Project.Current.FacePath, GameText.Face.Path);
+
+                        if (faceFile != null)
+                        {
+                            FaceImage = new BitmapImage(new Uri(faceFile));
+                        }
                     }
                     else
                     {
-                        //if (GameText?.Voice?.Path != null)
-                        //{
-                        //    var chara =
-                        //        GameText?.Characters.FirstOrDefault(
-                        //            c => c.Path.ToLower().Contains(GameText?.Voice?.Path.ToLower().Replace("fro", "flo").Split('_')[1].TrimEnd("0123456789".ToCharArray())));
-                        //    if (chara?.Path != null)
-                        //    {
-                        //        var face = chara?.Path.Split('_');
-                        //        face[1] = "f";
-                        //        var file = FileHelper.FindFile(Project.Current.FacePath, String.Join("_", face));
-                        //        if (file != null)
-                        //        {
-                        //            FaceImage = new BitmapImage(new Uri(file));
-                        //            return;
-                        //        }
-                        //    }
-                        //}
                         FaceImage = null;
                     }
                 }
@@ -244,7 +232,7 @@ namespace Mistilteinn.Controls
         }
 
         public event EventHandler<KeyEventArgs> KeyPressed;
-
+        
         void SelectNeedTranslate()
         {
             int startCount, endCount;
@@ -254,7 +242,7 @@ namespace Mistilteinn.Controls
             endCount = _content.Text.Length - _content.Text.TrimEnd(trimChars).Length;
 
             _content.SelectionStart = startCount;
-            _content.SelectionLength = _content.Text.Length - startCount - endCount;
+            _content.SelectionLength = (_content.Text.Length - startCount - endCount) < 0 ? 0 : (_content.Text.Length - startCount - endCount);
         }
     }
 }

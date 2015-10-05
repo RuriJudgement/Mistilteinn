@@ -22,11 +22,13 @@ namespace Mistilteinn
     {
         public void SetProject(Project project)
         {
+            SoundUnit.Initialize();
             var vm = new MainWindowViewModel()
             {
                 IsMute = project.IsMute,
                 IsMusicMute = project.IsMusicMute,
-                IsVoiceMute = project.IsVoiceMute
+                IsVoiceMute = project.IsVoiceMute,
+                FontSize = project.FontSize
             };
 
             foreach (var file in Directory.EnumerateFiles(project.TextPath, project.FileExtension))
@@ -43,7 +45,6 @@ namespace Mistilteinn
 
             vm.PreviewVisibility = project.IsPreviewEnable ? Visibility.Visible : Visibility.Collapsed;
 
-            SoundUnit.Initialize();
 
             this.DataContext = vm;
 
@@ -82,7 +83,16 @@ namespace Mistilteinn
             {
                 if ((DataContext as MainWindowViewModel).ActiveNameTable.Count >= index)
                 {
-                    GamePreview.AddText((DataContext as MainWindowViewModel).ActiveNameTable[index - 1].TranslatedText);
+                    if (ClassicTextEditer.Visibility == Visibility.Visible)
+                    {
+                        ClassicTextEditer.AddText((DataContext as MainWindowViewModel).ActiveNameTable[index - 1].TranslatedText);
+                        return;
+                    }
+                    if (GamePreview.Visibility == Visibility.Visible)
+                    {
+                        GamePreview.AddText((DataContext as MainWindowViewModel).ActiveNameTable[index - 1].TranslatedText);
+                        return;
+                    }
                 }
             }
         }
@@ -238,15 +248,21 @@ namespace Mistilteinn
         
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            await Task.Delay(500);
-
-            var project = await WelcomeWindow.ShowWelcomeWindow();
-            if (project != null)
+            if (Project.Current == null)
             {
-                Dispatcher.Invoke(() =>
+                //await Task.Delay(100);
+                var project = await WelcomeWindow.ShowWelcomeWindow();
+                if (project != null)
                 {
-                    SetProject(project);
-                });
+                    Dispatcher.Invoke(() =>
+                    {
+                        SetProject(project);
+                    });
+                }
+            }
+            else
+            {
+                SetProject(Project.Current);
             }
         }
 
@@ -291,7 +307,11 @@ namespace Mistilteinn
 
         private void EditInfoCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            new TextInfoEditWindow()
+            {
+                DataContext = FileList.SelectedItem,
+                Owner = this
+            }.ShowDialog();
         }
 
         private void FastFindCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -361,12 +381,13 @@ namespace Mistilteinn
 
         private void ProjectSettingCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            new SettingsWindow() {DataContext = Project.Current,Owner = this}.ShowDialog();
+            SetProject(Project.Current);
         }
 
         private void CheckCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //new CheckTextWindow() { Owner = this }.Show();
+            new CheckTextWindow() {DataContext = new CheckTextWindowViewModel(), Owner = this}.Show();
         }
 
         private void MuteCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -376,12 +397,12 @@ namespace Mistilteinn
 
         private void CloseMusicCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            (DataContext as MainWindowViewModel).IsMusicMute = !(DataContext as MainWindowViewModel).IsMusicMute;
         }
 
         private void CloseVoiceCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            (DataContext as MainWindowViewModel).IsVoiceMute = !(DataContext as MainWindowViewModel).IsVoiceMute;
         }
 
         private void ReplayVoiceCommand_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -454,6 +475,233 @@ namespace Mistilteinn
         {
             fileIndex = FileList.SelectedIndex;
             textIndex = TextList.SelectedIndex;
+        }
+
+        private void NextInfomationTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoNextText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Infomation));
+        }
+
+        private void NextWarnningTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoNextText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Warnning));
+        }
+
+        private void NextErrorTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoNextText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Error));
+        }
+
+        private void PreviousInfomationTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoPreviousText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Infomation));
+        }
+
+        private void PreviousWarnningTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoPreviousText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Warnning));
+        }
+
+        private void PreviousErrorTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoPreviousText(t => t.CheckResult.Importance.HasFlag(ErrorImportance.Error));
+        }
+
+        bool GotoNextText(Func<Text,bool> filter)
+        {
+            var viewModel = DataContext as MainWindowViewModel;
+
+            for (int fileIndex = FileList.SelectedIndex; fileIndex < viewModel.TextFiles.Count; fileIndex++)
+            {
+                var textFile = viewModel.TextFiles[fileIndex];
+                var textStart = 0;
+                if (fileIndex == FileList.SelectedIndex)
+                {
+                    textStart = TextList.SelectedIndex + 1;
+                }
+                else
+                {
+                    textStart = 0;
+                }
+                for (int textIndex = textStart; textIndex < textFile.Texts.Count; textIndex++)
+                {
+                    var text = textFile.Texts[textIndex];
+                    if (filter(text))
+                    {
+                        SetTextIndex(fileIndex, textIndex);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        bool GotoPreviousText(Func<Text, bool> filter)
+        {
+            var viewModel = DataContext as MainWindowViewModel;
+
+            for (int fileIndex = FileList.SelectedIndex; fileIndex >= 0; fileIndex--)
+            {
+                var textFile = viewModel.TextFiles[fileIndex];
+                var textStart = 0;
+                if (fileIndex == FileList.SelectedIndex)
+                {
+                    textStart = TextList.SelectedIndex - 1;
+                }
+                else
+                {
+                    textStart = textFile.Texts.Count - 1;
+                }
+                for (int textIndex = textStart; textIndex >= 0; textIndex--)
+                {
+                    var text = textFile.Texts[textIndex];
+                    if (filter(text))
+                    {
+                        SetTextIndex(fileIndex, textIndex);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private void ClassicViewCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            (DataContext as MainWindowViewModel).IsClassicViewMode =
+                !(DataContext as MainWindowViewModel).IsClassicViewMode;
+        }
+
+        private void PreviousCommentTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoPreviousText(t => !String.IsNullOrEmpty(t.Comment));
+        }
+
+        private void NextCommentTextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            GotoNextText(t => !String.IsNullOrEmpty(t.Comment));
+        }
+
+        public bool IsProjectValid => Project.Current != null;
+        public bool IsTextFileValid => FileList?.SelectedItem != null;
+        public bool IsTextValid => TextList?.SelectedItem != null;
+        public bool IsNameTableValid => NameTableUnit.NameTable != null;
+        public bool IsVoiceCanReplay => IsProjectValid && IsTextValid && Project.Current.IsVoiceEnable && !Project.Current.IsVoiceMute && !String.IsNullOrEmpty(SoundUnit.Voice);
+
+        private void SaveProjectCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void SaveAsProjectCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void EditInfoCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid;
+        }
+
+        private void EditRawCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid;
+        }
+
+        private void FastFindCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void FindInOriginalCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void FindInTranslatedCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void CheckCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void NameTableCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsNameTableValid;
+        }
+
+        private void ProjectSettingCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void MuteCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void CloseMusicCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void CloseVoiceCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
+        }
+
+        private void ReplayVoiceCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsVoiceCanReplay;
+        }
+
+        private void NextInfomationTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void NextWarnningTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void NextErrorTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void PreviousInfomationTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void PreviousWarnningTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void PreviousErrorTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void PreviousCommentTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void NextCommentTextCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid && IsTextFileValid && IsTextValid;
+        }
+
+        private void ClassicViewCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = IsProjectValid;
         }
     }
 }

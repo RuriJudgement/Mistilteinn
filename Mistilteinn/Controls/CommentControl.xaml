@@ -23,7 +23,7 @@
     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <wpf:Card x:Name="Card" UniformCornerRadius="15" 
                   Padding="1" 
-                  ToolTip="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ToolTip="{Binding Comment}"
                   VerticalAlignment="Center" HorizontalAlignment="Center" 
                   MouseDown="Card_MouseDown">
             <Grid Width="16" Height="16">

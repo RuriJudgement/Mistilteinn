@@ -15,6 +15,11 @@ namespace Mistilteinn.Unit
         static readonly TCallbackFunc BgmCallback = MsgBgm;
         public static void Initialize()
         {
+            if (VoicePlayer != null && BgmPlayer != null)
+            {
+                return;
+            }
+
             VoicePlayer = new ZPlay();
             BgmPlayer = new ZPlay();
 
@@ -24,13 +29,14 @@ namespace Mistilteinn.Unit
             BgmPlayer.SetCallbackFunc(BgmCallback, TCallbackMessage.MsgStopAsync, 0);
         }
         static String Bgm { get; set; }
-        static String Voice { get; set; }
+        public static String Voice { get; set; }
 
         private static bool _notStop;
         private static DateTime _createTime;
 
         public static async void ReadScript(Text text)
         {
+            Voice = null;
             var bgm = text?.Music?.Path;
             var voice = text?.Voice?.Path;
 
@@ -69,9 +75,9 @@ namespace Mistilteinn.Unit
                         Voice = voiceFile;
                         if (!Project.Current.IsMute && !Project.Current.IsVoiceMute)
                         {
-                            VoicePlayer.StopPlayback();
                             if (DateTime.Now - _createTime > TimeSpan.FromMilliseconds(500))
                             {
+                                VoicePlayer.StopPlayback();
                                 VoicePlayer.OpenFile(voiceFile, TStreamFormat.sfUnknown);
                                 VoicePlayer.StartPlayback();
                             }
@@ -157,6 +163,7 @@ namespace Mistilteinn.Unit
             }
             else
             {
+                _notStop = true;
                 BgmPlayer.StopPlayback();
                 VoicePlayer.StopPlayback();
             }

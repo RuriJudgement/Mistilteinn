@@ -62,12 +62,29 @@ namespace Mistilteinn.ViewModels
                 if (_previewVisibility == value) return;
                 _previewVisibility = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ClassicVisibility));
+            }
+        }
+        public Visibility ClassicVisibility => PreviewVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+
+        public bool IsClassicViewMode
+        {
+            get { return _isClassicViewMode; }
+            set
+            {
+                if (value == _isClassicViewMode) return;
+                _isClassicViewMode = value;
+                OnPropertyChanged();
+                Project.Current.IsClassicViewModeOn = value;
+                PreviewVisibility = (!Project.Current.IsPreviewEnable || value) ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
         private bool _isMute;
         private bool _isMusicMute;
         private bool _isVoiceMute;
+        private bool _isClassicViewMode;
+        private double _fontSize;
 
         public bool IsMute
         {
@@ -108,6 +125,17 @@ namespace Mistilteinn.ViewModels
                 OnPropertyChanged();
                 Project.Current.IsVoiceMute = value;
                 SoundUnit.SetMute();
+            }
+        }
+
+        public double FontSize
+        {
+            get { return _fontSize; }
+            set
+            {
+                if (value.Equals(_fontSize)) return;
+                _fontSize = value;
+                OnPropertyChanged();
             }
         }
     }

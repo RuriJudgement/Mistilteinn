@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using Mistilteinn.Unit;
+using Newtonsoft.Json;
 
 namespace Mistilteinn.ViewModels
 {
@@ -13,8 +14,6 @@ namespace Mistilteinn.ViewModels
         {
             WaitHandle = waitHandle;
             TextFileEx = "*.c";
-
-
 #if DEBUG
             TextFileFolder = @"E:\Localization\共通";
             VoiceFileFolder = @"E:\Localization\数据包\语音";
@@ -25,14 +24,23 @@ namespace Mistilteinn.ViewModels
             NameTableFile = @"E:\Development\GitHub\SoraHana\名词表.txt";
 #endif
 
+            if (File.Exists("Project.cache"))
+            {
+                JsonConvert.PopulateObject(File.ReadAllText("Project.cache"), this);
+            }
+
         }
 
+        [JsonIgnore]
         public EventWaitHandle WaitHandle { get; private set; }
 
+        [JsonIgnore]
         public Project CreatedProject { get; private set; }
 
         public Project Create()
         {
+            File.WriteAllText("Project.cache",JsonConvert.SerializeObject(this));
+            
             Project result = Project.CreateProject();
 
             result.TextPath = TextFileFolder;

@@ -52,6 +52,12 @@
   <PropertyGroup>
     <StartupObject>Mistilteinn.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Mistilteinn.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=1.0.0.43030, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,6 +67,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Users\higan\Desktop\MaterialDesignInXamlToolkit-master\MainDemo.Wpf\bin\Release\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -94,11 +101,15 @@
     <Compile Include="CommentEditWindow.xaml.cs">
       <DependentUpon>CommentEditWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ClassicTextEdit.xaml.cs">
+      <DependentUpon>ClassicTextEdit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CommentControl.xaml.cs">
       <DependentUpon>CommentControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CustomPanel.cs" />
     <Compile Include="Controls\GamePreview.cs" />
+    <Compile Include="Controls\ITextEditer.cs" />
     <Compile Include="Controls\MessageDialogButton.cs" />
     <Compile Include="Controls\TextCheckControl.xaml.cs">
       <DependentUpon>TextCheckControl.xaml</DependentUpon>
@@ -120,6 +131,7 @@
     <Compile Include="FindResult.cs" />
     <Compile Include="Helper\DialogHelper.cs" />
     <Compile Include="Helper\FileHelper.cs" />
+    <Compile Include="Helper\Tools.cs" />
     <Compile Include="Helper\VisualTreeHelper.cs" />
     <Compile Include="MessageWindow.xaml.cs">
       <DependentUpon>MessageWindow.xaml</DependentUpon>
@@ -129,6 +141,15 @@
     </Compile>
     <Compile Include="Project.cs" />
     <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextCheckFilterSelectWindow.xaml.cs">
+      <DependentUpon>TextCheckFilterSelectWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TextInfoEditWindow.xaml.cs">
+      <DependentUpon>TextInfoEditWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Texts\Background.cs" />
     <Compile Include="Texts\Character.cs" />
     <Compile Include="Texts\Face.cs" />
@@ -157,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CommentEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ClassicTextEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -201,6 +226,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TextCheckFilterSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TextInfoEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -229,6 +266,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Resource Include="Assets\fontello.ttf" />
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -255,8 +293,14 @@
     <Resource Include="Assets\textbox.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MaterialDesignColors.dll" />
-    <Content Include="MaterialDesignThemes.Wpf.dll" />
+    <Resource Include="Mistilteinn.ico" />
+    <Resource Include="Assets\Mistilteinn.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mistilteinn.Tools\Mistilteinn.Tools.csproj">
+      <Project>{b4258a0a-7962-4790-9314-340543f6f68c}</Project>
+      <Name>Mistilteinn.Tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

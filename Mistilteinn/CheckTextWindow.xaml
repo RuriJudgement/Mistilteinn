@@ -13,7 +13,7 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
         
-        Title="文本检查" Height="400" Width="500" d:DataContext="{d:DesignInstance Type=viewModels:CheckTextWindowViewModel}">
+        Title="文本检查" Height="500" Width="600" d:DataContext="{d:DesignInstance Type=viewModels:CheckTextWindowViewModel}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -23,48 +23,48 @@
             <converters:TextInfomationToName x:Key="TextInfomationToName"/>
             <converters:TextInfomationsToString x:Key="TextInfomationsToString"/>
             <converters:StringToVisibility x:Key="StringToVisibility"/>
-            <Storyboard x:Name="BeginCheck" x:Key="BeginCheck" Completed="Storyboard_Completed">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="progressBar">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CircleEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="textBlock">
-                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CircleEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="progressBar">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
-            <Storyboard x:Name="EndCheck" x:Key="EndCheck">
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="progressBar">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="20">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CircleEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="textBlock">
-                    <EasingDoubleKeyFrame KeyTime="0:0:1" Value="-14">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CircleEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="progressBar">
-                    <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
-                        <EasingDoubleKeyFrame.EasingFunction>
-                            <CircleEase EasingMode="EaseOut"/>
-                        </EasingDoubleKeyFrame.EasingFunction>
-                    </EasingDoubleKeyFrame>
-                </DoubleAnimationUsingKeyFrames>
-            </Storyboard>
+            <Style x:Key="DataGridCellStyle" TargetType="{x:Type DataGridCell}">
+                <Setter Property="TextBlock.FontSize" Value="13" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                        <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignTextBoxBorder}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="True"/>
+                            <Condition Property="Selector.IsSelectionActive" Value="False"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="true"/>
+                            <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
+                    </MultiTrigger>
+                    <Trigger Property="IsEnabled" Value="false">
+                        <Setter Property="Opacity" Value=".56"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -81,35 +81,17 @@
             <TextBlock Text="文本检查" FontWeight="Bold" FontSize="16"/>
             <TextBlock TextWrapping="WrapWithOverflow" Text="文本检查可以简单的审核文本是否符合格式需要." Margin="0,4,0,0"/>
         </StackPanel>
-        <Button x:Name="StartCheck" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0" VerticalAlignment="Bottom" MinWidth="92" Click="StartCheck_Click">
-            <StackPanel Orientation="Horizontal">
-                <ProgressBar x:Name="progressBar" Style="{StaticResource MaterialDesignCicularProgressBar}"                     
-                     Value="0"
-                     IsIndeterminate="True"
-                     Grid.Column="0" Foreground="White" Opacity="0" RenderTransformOrigin="0.5,0.5">
-                    <ProgressBar.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform X="20"/>
-                        </TransformGroup>
-                    </ProgressBar.RenderTransform>
-                </ProgressBar>
-                <TextBlock x:Name="textBlock" Text="开始" HorizontalAlignment="Left" Margin="8,0,0,0" FontSize="16" RenderTransformOrigin="0.5,0.5">
-                    <TextBlock.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform X="-14"/>
-                        </TransformGroup>
-                    </TextBlock.RenderTransform></TextBlock>
-            </StackPanel>
-        </Button>
-        <DataGrid Grid.Row="1" IsReadOnly="True" Grid.ColumnSpan="2" AutoGenerateColumns="False" ItemsSource="{Binding CheckTextResults}">
+        <Button Content="设置筛选器" Grid.Column="1" Grid.Row="0" VerticalAlignment="Bottom" Click="Button_Click"/>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ItemsSource="{Binding CheckTextResults}" CellStyle="{DynamicResource DataGridCellStyle}" SizeChanged="DataGrid_SizeChanged" SelectionChanged="DataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="序号" Binding="{Binding Index, StringFormat=000}"/>
+                <DataGridTextColumn Binding="{Binding Index, StringFormat=000}" IsReadOnly="True" Header="编号">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource DataGridCellStyle}">
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTemplateColumn  Header="原文本" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -121,8 +103,8 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <TextBox Visibility="{Binding Text.NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding Text.NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                    <TextBox wpf:TextFieldAssist.Hint="原文本" Grid.Row="1" Text="{Binding Text.OriginalText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                    <TextBox Visibility="{Binding NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox wpf:TextFieldAssist.Hint="原文本" Grid.Row="1" Text="{Binding OriginalText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
                                 </Grid>
                             </wpf:Card>
                         </DataTemplate>
@@ -140,11 +122,11 @@
                                         <RowDefinition/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBox Visibility="{Binding Text.NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding Text.NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-                                    <TextBox wpf:TextFieldAssist.Hint="翻译文本" Grid.Row="1" Text="{Binding Text.TranslatedText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
+                                    <TextBox Visibility="{Binding NameBoard, Converter={StaticResource StringToVisibility}}" Text="{Binding NameBoard, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox wpf:TextFieldAssist.Hint="翻译文本" Grid.Row="1" Text="{Binding TranslatedText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="WrapWithOverflow" AcceptsReturn="True"></TextBox>
                                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,4,0,0" >
-                                        <controls:CommentControl DataContext="{Binding Text}" Margin="0,0,8,0"/>
-                                        <controls:TextCheckControl DataContext="{Binding Text.CheckResult}"/>
+                                        <controls:CommentControl DataContext="{Binding}" Margin="0,0,8,0"/>
+                                        <controls:TextCheckControl DataContext="{Binding CheckResult}"/>
                                     </StackPanel>
                                 </Grid>
                             </wpf:Card>

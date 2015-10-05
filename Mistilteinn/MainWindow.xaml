@@ -18,7 +18,7 @@
         
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
-        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded"
+        WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Icon="Assets/Mistilteinn.ico"
         >
     <Window.Resources>
         <ResourceDictionary>
@@ -30,40 +30,44 @@
             <converters:TextInfomationsToString x:Key="TextInfomationsToString"/>
             <converters:StringToVisibility x:Key="StringToVisibility"/>
             <Style x:Key="DataGridCellStyle" TargetType="{x:Type DataGridCell}">
+                <Setter Property="TextBlock.FontSize" Value="13" />
+                <Setter Property="Padding" Value="0" />
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderBrush" Value="Transparent"/>
-                <Setter Property="BorderThickness" Value="1"/>
-                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridCell}">
                             <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}"/>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
                 <Style.Triggers>
-                    <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                    </Trigger>
                     <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
+                        <Setter Property="BorderBrush" Value="{DynamicResource MaterialDesignTextBoxBorder}"/>
                     </Trigger>
                     <MultiTrigger>
                         <MultiTrigger.Conditions>
-                            <Condition Property="IsSelected" Value="true"/>
-                            <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                            <Condition Property="IsSelected" Value="True"/>
+                            <Condition Property="Selector.IsSelectionActive" Value="False"/>
                         </MultiTrigger.Conditions>
-                        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
-                        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightBrushKey}}"/>
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}}"/>
+                        <Setter Property="Background" Value="{DynamicResource MaterialDesignSelection}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="true"/>
+                            <Condition Property="Selector.IsSelectionActive" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"/>
                     </MultiTrigger>
                     <Trigger Property="IsEnabled" Value="false">
-                        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        <Setter Property="Opacity" Value=".56"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -73,50 +77,79 @@
         <CommandBinding Command="{x:Static cmd:MenuCommands.FileCommand}" Executed="CommandBinding_Executed"/>
         <CommandBinding x:Name="NewProjectCommand" Command="{x:Static cmd:MenuCommands.NewProjectCommand}" Executed="NewProjectCommand_Executed"/>
         <CommandBinding x:Name="OpenProjectCommand" Command="{x:Static cmd:MenuCommands.OpenProjectCommand}" Executed="OpenProjectCommand_Executed"/>
-        <CommandBinding x:Name="SaveProjectCommand" Command="{x:Static cmd:MenuCommands.SaveProjectCommand}" Executed="SaveProjectCommand_Executed"/>
-        <CommandBinding x:Name="SaveAsProjectCommand" Command="{x:Static cmd:MenuCommands.SaveAsProjectCommand}" Executed="SaveAsProjectCommand_Executed"/>
+        <CommandBinding x:Name="SaveProjectCommand" Command="{x:Static cmd:MenuCommands.SaveProjectCommand}" Executed="SaveProjectCommand_Executed" CanExecute="SaveProjectCommand_CanExecute"/>
+        <CommandBinding x:Name="SaveAsProjectCommand" Command="{x:Static cmd:MenuCommands.SaveAsProjectCommand}" Executed="SaveAsProjectCommand_Executed" CanExecute="SaveAsProjectCommand_CanExecute"/>
         <CommandBinding x:Name="ExitCommand" Command="{x:Static cmd:MenuCommands.ExitCommand}" Executed="ExitCommand_Executed"/>
 
         <CommandBinding Command="{x:Static cmd:MenuCommands.EditCommand}" Executed="CommandBinding_Executed"/>
         <CommandBinding x:Name="EditInfoCommand" 
                         Command="{x:Static cmd:MenuCommands.EditInfoCommand}" 
-                        Executed="EditInfoCommand_Executed"/>
+                        Executed="EditInfoCommand_Executed" CanExecute="EditInfoCommand_CanExecute"/>
         <CommandBinding x:Name="EditRawCommand" 
                         Command="{x:Static cmd:MenuCommands.EditRawCommand}" 
-                        Executed="EditRawCommand_Executed"/>
+                        Executed="EditRawCommand_Executed" CanExecute="EditRawCommand_CanExecute"/>
         <CommandBinding Command="{x:Static cmd:MenuCommands.FindCommand}" Executed="CommandBinding_Executed"/>
         <CommandBinding x:Name="FastFindCommand" 
                         Command="{x:Static cmd:MenuCommands.FastFindCommand}" 
-                        Executed="FastFindCommand_Executed"/>
+                        Executed="FastFindCommand_Executed" CanExecute="FastFindCommand_CanExecute"/>
         <CommandBinding x:Name="FindInOriginalCommand" 
                         Command="{x:Static cmd:MenuCommands.FindInOriginalCommand}" 
-                        Executed="FindInOriginalCommand_Executed"/>
+                        Executed="FindInOriginalCommand_Executed" CanExecute="FindInOriginalCommand_CanExecute"/>
         <CommandBinding x:Name="FindInTranslatedCommand" 
                         Command="{x:Static cmd:MenuCommands.FindInTranslatedCommand}" 
-                        Executed="FindInTranslatedCommand_Executed"/>
+                        Executed="FindInTranslatedCommand_Executed" CanExecute="FindInTranslatedCommand_CanExecute"/>
         <CommandBinding x:Name="CheckCommand" 
-                        Command="{x:Static cmd:MenuCommands.CheckCommand}" 
-                        Executed="CheckCommand_Executed"/>
+                        Command="{x:Static cmd:MenuCommands.ViewCheckCommand}" 
+                        Executed="CheckCommand_Executed" CanExecute="CheckCommand_CanExecute"/>
         <CommandBinding x:Name="NameTableCommand" 
                         Command="{x:Static cmd:MenuCommands.NameTableCommand}" 
-                        Executed="NameTableCommand_Executed"/>
+                        Executed="NameTableCommand_Executed" CanExecute="NameTableCommand_CanExecute"/>
         <CommandBinding x:Name="ProjectSettingCommand" 
                         Command="{x:Static cmd:MenuCommands.ProjectSettingCommand}" 
-                        Executed="ProjectSettingCommand_Executed"/>
-
+                        Executed="ProjectSettingCommand_Executed" CanExecute="ProjectSettingCommand_CanExecute"/>
         <CommandBinding Command="{x:Static cmd:MenuCommands.SoundCommand}" Executed="CommandBinding_Executed"/>
         <CommandBinding x:Name="MuteCommand" 
                         Command="{x:Static cmd:MenuCommands.MuteCommand}" 
-                        Executed="MuteCommand_Executed"/>
+                        Executed="MuteCommand_Executed" CanExecute="MuteCommand_CanExecute"/>
         <CommandBinding x:Name="CloseMusicCommand" 
                         Command="{x:Static cmd:MenuCommands.CloseMusicCommand}" 
-                        Executed="CloseMusicCommand_Executed"/>
+                        Executed="CloseMusicCommand_Executed" CanExecute="CloseMusicCommand_CanExecute"/>
         <CommandBinding x:Name="CloseVoiceCommand" 
                         Command="{x:Static cmd:MenuCommands.CloseVoiceCommand}" 
-                        Executed="CloseVoiceCommand_Executed"/>
+                        Executed="CloseVoiceCommand_Executed" CanExecute="CloseVoiceCommand_CanExecute"/>
         <CommandBinding x:Name="ReplayVoiceCommand" 
                         Command="{x:Static cmd:MenuCommands.ReplayVoiceCommand}" 
-                        Executed="ReplayVoiceCommand_Executed"/>
+                        Executed="ReplayVoiceCommand_Executed" CanExecute="ReplayVoiceCommand_CanExecute"/>
+
+        <CommandBinding x:Name="NextInfomationTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.NextInfomationTextCommand}" 
+                        Executed="NextInfomationTextCommand_Executed" CanExecute="NextInfomationTextCommand_CanExecute"/>
+        <CommandBinding x:Name="NextWarnningTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.NextWarnningTextCommand}" 
+                        Executed="NextWarnningTextCommand_Executed" CanExecute="NextWarnningTextCommand_CanExecute"/>
+        <CommandBinding x:Name="NextErrorTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.NextErrorTextCommand}" 
+                        Executed="NextErrorTextCommand_Executed" CanExecute="NextErrorTextCommand_CanExecute"/>
+        <CommandBinding x:Name="PreviousInfomationTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.PreviousInfomationTextCommand}" 
+                        Executed="PreviousInfomationTextCommand_Executed" CanExecute="PreviousInfomationTextCommand_CanExecute"/>
+        <CommandBinding x:Name="PreviousWarnningTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.PreviousWarnningTextCommand}" 
+                        Executed="PreviousWarnningTextCommand_Executed" CanExecute="PreviousWarnningTextCommand_CanExecute"/>
+        <CommandBinding x:Name="PreviousErrorTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.PreviousErrorTextCommand}" 
+                        Executed="PreviousErrorTextCommand_Executed" CanExecute="PreviousErrorTextCommand_CanExecute"/>
+
+        <CommandBinding x:Name="PreviousCommentTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.PreviousCommentTextCommand}" 
+                        Executed="PreviousCommentTextCommand_Executed" CanExecute="PreviousCommentTextCommand_CanExecute"/>
+        <CommandBinding x:Name="NextCommentTextCommand" 
+                        Command="{x:Static cmd:MenuCommands.NextCommentTextCommand}" 
+                        Executed="NextCommentTextCommand_Executed" CanExecute="NextCommentTextCommand_CanExecute"/>
+
+        <CommandBinding x:Name="ClassicViewCommand" 
+                        Command="{x:Static cmd:MenuCommands.ClassicViewCommand}" 
+                        Executed="ClassicViewCommand_Executed" CanExecute="ClassicViewCommand_CanExecute"/>
     </Window.CommandBindings>
 
     <Grid>
@@ -171,11 +204,6 @@
                     <MenuItem Command="{x:Static cmd:MenuCommands.FindInOriginalCommand}"  InputGestureText="Ctrl+Shift+O" ToolTip="在原文中快速查找 Ctrl+Shift+O"/>
                     <MenuItem Command="{x:Static cmd:MenuCommands.FindInTranslatedCommand}"  InputGestureText="Ctrl+Shift+T" ToolTip="在译文中快速查找 Ctrl+Shift+T"/>
                 </MenuItem>
-                <MenuItem Command="{x:Static cmd:MenuCommands.CheckCommand}"  InputGestureText="Ctrl+C" ToolTip="检查文本合法性 Ctrl+C">
-                    <MenuItem.Icon>
-                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe878;" FontSize="14"/>
-                    </MenuItem.Icon>
-                </MenuItem>
                 <Separator/>
                 <MenuItem Command="{x:Static cmd:MenuCommands.NameTableCommand}"  InputGestureText="Ctrl+T" ToolTip="查看名词表 Ctrl+T">
                     <MenuItem.Icon>
@@ -188,16 +216,46 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="检查(_C)">
+                <MenuItem Command="{x:Static cmd:MenuCommands.ViewCheckCommand}"  InputGestureText="Ctrl+Shift+C" ToolTip="查看所有文本的检查结果 Ctrl+Shift+C">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xe878;" FontSize="14"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.PreviousInfomationTextCommand}"  InputGestureText="Ctrl+Shift+F3" ToolTip="转到上一个检查结果为提示的文本 Ctrl+Shift+F3">
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.NextInfomationTextCommand}"  InputGestureText="Ctrl+Shift+F4" ToolTip="转到下一个检查结果为提示的文本 Ctrl+Shift+F4">
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.PreviousWarnningTextCommand}"  InputGestureText="Ctrl+F3" ToolTip="转到上一个检查结果为警告的文本 Ctrl+F3">
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.NextWarnningTextCommand}"  InputGestureText="Ctrl+F4" ToolTip="转到下一个检查结果为警告的文本 Ctrl+F4">
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.PreviousErrorTextCommand}"  InputGestureText="F3" ToolTip="转到上一个检查结果为错误的文本 F3">
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.NextErrorTextCommand}"  InputGestureText="F4" ToolTip="转到下一个检查结果为错误的文本 F4">
+                </MenuItem>
+                <Separator/>
+                <MenuItem Command="{x:Static cmd:MenuCommands.PreviousCommentTextCommand}"  InputGestureText="Alt+F3" ToolTip="转到上一个有注释的文本 Alt+F3">
+                </MenuItem>
+                <MenuItem Command="{x:Static cmd:MenuCommands.NextCommentTextCommand}"  InputGestureText="Alt+F4" ToolTip="转到下一个有注释的文本 Alt+F4">
+                </MenuItem>
+            </MenuItem>
             <MenuItem Command="{x:Static cmd:MenuCommands.SoundCommand}">
-                <MenuItem IsCheckable="True" IsChecked="{Binding IsMute, Mode=TwoWay}" Header="静音(_M)" InputGestureText="Ctrl+M" ToolTip="切换静音 Ctrl+M"/>
-                <MenuItem IsCheckable="True" IsChecked="{Binding IsMusicMute, Mode=TwoWay}" Command="{x:Static cmd:MenuCommands.CloseMusicCommand}" InputGestureText="Ctrl+Shift+M" ToolTip="关闭BGM Ctrl+Shift+M"/>
-                <MenuItem IsCheckable="True" IsChecked="{Binding IsVoiceMute, Mode=TwoWay}" Command="{x:Static cmd:MenuCommands.CloseVoiceCommand}" InputGestureText="Ctrl+Shift+V" ToolTip="关闭语音 Ctrl+Shift+V"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsMute, Mode=OneWay}" Command="{x:Static cmd:MenuCommands.MuteCommand}" InputGestureText="Ctrl+M" ToolTip="切换静音 Ctrl+M"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsMusicMute, Mode=OneWay}" Command="{x:Static cmd:MenuCommands.CloseMusicCommand}" InputGestureText="Ctrl+Shift+M" ToolTip="关闭BGM Ctrl+Shift+M"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding IsVoiceMute, Mode=OneWay}" Command="{x:Static cmd:MenuCommands.CloseVoiceCommand}" InputGestureText="Ctrl+Shift+V" ToolTip="关闭语音 Ctrl+Shift+V"/>
                 <Separator/>
                 <MenuItem Command="{x:Static cmd:MenuCommands.ReplayVoiceCommand}" InputGestureText="F5" ToolTip="重播语音 F5">
                     <MenuItem.Icon>
                         <TextBlock FontFamily="/Mistilteinn;component/Assets/#fontello" Text="&#xedf2;" FontSize="14"/>
                     </MenuItem.Icon>
                 </MenuItem>
+            </MenuItem>
+            <MenuItem Header="视图(_V)">
+                <MenuItem IsChecked="{Binding IsClassicViewMode, Mode=OneWay}" IsCheckable="True" Command="{x:Static cmd:MenuCommands.ClassicViewCommand}" InputGestureText="F2" ToolTip="切换到经典视图 F2"/>
             </MenuItem>
         </Menu>
         <ToolBarTray Grid.Row="1" >
@@ -207,7 +265,7 @@
                 <Button ToolTip="保存项目 Ctrl+S" Command="{x:Static cmd:MenuCommands.SaveProjectCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xeaf9;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
                 <Separator/>
                 <Button ToolTip="在原文与译文中快速查找 Ctrl+F" Command="{x:Static cmd:MenuCommands.FastFindCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe824;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
-                <Button ToolTip="检查文本合法性 Ctrl+C" Command="{x:Static cmd:MenuCommands.CheckCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe878;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
+                <Button ToolTip="查看所有文本的检查结果 Ctrl+Shift+C" Command="{x:Static cmd:MenuCommands.ViewCheckCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe878;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
                 <Button ToolTip="查看名词表 Ctrl+T" Command="{x:Static cmd:MenuCommands.NameTableCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe83d;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
                 <Button ToolTip="项目设定 Ctrl+S" Command="{x:Static cmd:MenuCommands.ProjectSettingCommand}" Padding="8,4"  FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe8a7;" FontSize="20" Foreground="{DynamicResource PrimaryHueDarkBrush}" FontWeight="Normal"/>
                 <Separator/>
@@ -240,11 +298,18 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Button Grid.Column="2" FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe876;" FontSize="16" FontWeight="Normal" Margin="9,0,0,0" Height="30" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" Width="30"/>
+                    <Button Grid.Column="2" Command="{x:Static cmd:MenuCommands.EditInfoCommand}" FontFamily="/Mistilteinn;component/Assets/#fontello" Content="&#xe876;" FontSize="16" FontWeight="Normal" Margin="9,0,0,0" Height="30" Style="{StaticResource MaterialDesignFloatingActionDarkButton}" Width="30"/>
                 </Grid>
-                <DataGrid x:Name="TextList" Grid.Row="1" IsReadOnly="True" ItemsSource="{Binding SelectedItem.Texts, ElementName=FileList}" AutoGenerateColumns="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" SizeChanged="DataGrid_SizeChanged" VerticalContentAlignment="Stretch" CellStyle="{DynamicResource DataGridCellStyle}" SelectionChanged="DataGrid_SelectionChanged" Margin="0,8,0,0">
+                <DataGrid x:Name="TextList" Grid.Row="1" ItemsSource="{Binding SelectedItem.Texts, ElementName=FileList}" IsReadOnly="True" AutoGenerateColumns="False" SelectionMode="Single" HorizontalContentAlignment="Stretch" SizeChanged="DataGrid_SizeChanged" VerticalContentAlignment="Stretch" CellStyle="{DynamicResource DataGridCellStyle}" SelectionChanged="DataGrid_SelectionChanged" Margin="0,8,0,0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Index, StringFormat=000}" IsReadOnly="True" Header="编号"/>
+                        <DataGridTextColumn Binding="{Binding Index, StringFormat=000}" IsReadOnly="True" Header="编号">
+                            <DataGridTextColumn.CellStyle>
+                                <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource DataGridCellStyle}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.CellStyle>
+                        </DataGridTextColumn>
                         <DataGridTemplateColumn  Header="原文本" IsReadOnly="True">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -306,11 +371,16 @@
                                                         EditingElementStyle="{StaticResource MaterialDesignDataGridTextColumnEditingStyle}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <Viewbox Grid.Row="1">
-                    <Grid Width="1280" Height="720">
-                        <controls:GamePreview x:Name="GamePreview" GameText="{Binding SelectedItem, ElementName=TextList}" KeyPressed="GamePreview_KeyPressed" Visibility="{Binding PreviewVisibility}"/>
-                    </Grid>
-                </Viewbox>
+                <Grid Grid.Row="1" Visibility="{Binding PreviewVisibility}">
+                    <Viewbox >
+                        <controls:GamePreview x:Name="GamePreview" FontSize="{Binding FontSize}" GameText="{Binding SelectedItem, ElementName=TextList}" KeyPressed="GamePreview_KeyPressed" Width="1280" Height="720"/>
+                    </Viewbox>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,140,60" >
+                        <controls:CommentControl DataContext="{Binding SelectedItem, ElementName=TextList}" Margin="0,0,8,0"/>
+                        <controls:TextCheckControl DataContext="{Binding SelectedItem.CheckResult, ElementName=TextList}"/>
+                    </StackPanel>
+                </Grid>
+                <controls:ClassicTextEdit FontSize="{Binding FontSize}" x:Name="ClassicTextEditer" Visibility="{Binding ClassicVisibility}" KeyPressed="GamePreview_KeyPressed" Height="434" Grid.Row="1" Text="{Binding SelectedItem, ElementName=TextList}"/>
             </Grid>
         </Grid>
     </Grid>

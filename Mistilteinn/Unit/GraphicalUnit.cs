@@ -48,6 +48,8 @@ namespace Mistilteinn.Unit
                             }
                         }
 
+                        charas = charas?.Distinct().ToList();
+
                         if ((charas?.Count ?? 0) > 0)
                         {
                             var charaImage = charas.Select(c =>
