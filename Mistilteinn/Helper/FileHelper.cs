@@ -22,9 +22,14 @@ namespace Mistilteinn.Helper
 
             var folder = Path.GetDirectoryName(fileName);
             var file = Path.GetFileName(path);
+            var pathFolder = Path.GetDirectoryName(path);
 
-            return Directory.GetFiles(Path.GetDirectoryName(path))
-                .FirstOrDefault(f => f.ToLower().Contains(Path.GetFileName(path).ToLower()));
+            if (!String.IsNullOrEmpty(pathFolder))
+            {
+                return Directory.GetFiles(pathFolder)
+                    .FirstOrDefault(f => f.ToLower().Contains(Path.GetFileName(path).ToLower()));
+            }
+            return null;
         }
     }
 }

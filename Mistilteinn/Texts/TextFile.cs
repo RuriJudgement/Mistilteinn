@@ -122,6 +122,14 @@ namespace Mistilteinn.Texts
                 }
             }
 
+            if (!currentText.IsEmpty && !result.Texts.Contains(currentText))
+            {
+                currentText.Index = result.Texts.Count + 1;
+                result.Texts.Add(currentText);
+                currentText.CreateOver();
+                TextChecker.Check(currentText);
+            }
+
             return result;
         }
         
